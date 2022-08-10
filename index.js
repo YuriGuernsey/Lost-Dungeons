@@ -10,18 +10,12 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  io.emit('connection', name);
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    io.emit('disconnect', name);
   });
   socket.on('chat message', (msg) => {
     io.emit('chat message', msg);
-  });
-  socket.on('moveX', (updatedXPos) => {
-    io.emit('moveX', updatedXPos);
-  });
-  socket.on('moveY', (updatedYPos) => {
-    io.emit('moveY', updatedYPos);
   });
 });
 
