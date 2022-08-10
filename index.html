@@ -120,11 +120,11 @@ $(document).on('keypress', function(event) {
           }
 })
 
-socket.on('moveX, function(updatedXPos) {
+socket.on('moveX', function(updatedXPos) {
 	$('.player').css('top', updatedXPos);
 });
 
-socket.on('moveY, function(updatedYPos) {
+socket.on('moveY', function(updatedYPos) {
   $('.player').css('left', updatedYPos);
 });
 
