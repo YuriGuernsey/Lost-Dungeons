@@ -17,6 +17,12 @@ io.on('connection', (socket) => {
   socket.on('chat message', (msg) => {
     io.emit('chat message', msg);
   });
+  socket.on('moveX', (updatedXPos) => {
+    io.emit('moveX', updatedXPos);
+  });
+  socket.on('moveY', (updatedYPos) => {
+    io.emit('moveY', updatedYPos);
+  });
 });
 
 server.listen(process.env.PORT || 8080, () => {
