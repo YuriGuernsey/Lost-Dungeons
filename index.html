@@ -56,19 +56,5 @@ socket.on('chat message', function(msg) {
   window.scrollTo(0, document.body.scrollHeight);
 });
 
-
-socket.on('user connect', function(msg) {
-  var item = document.createElement('li');
-  item.textContent = msg + ' has joined';
-  messages.appendChild(item);
-  window.scrollTo(0, document.body.scrollHeight);
-});
-
-socket.on('user disconnect', function(msg) {
-  var item = document.createElement('li');
-  item.textContent = msg + ' has left';
-  messages.appendChild(item);
-  window.scrollTo(0, document.body.scrollHeight);
-});
   </script>
 </html>
