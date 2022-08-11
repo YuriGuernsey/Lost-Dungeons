@@ -20,6 +20,9 @@ io.on('connection', (socket) => {
   socket.on('chat message', (msg) => {
     io.emit('chat message', msg);
   });
+  socket.on('chat image', (msg) => {
+    io.emit('chat image', msg);
+  });
 });
 });
 server.listen(process.env.PORT || 8080, () => {

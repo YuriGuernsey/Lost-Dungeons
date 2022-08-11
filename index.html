@@ -13,8 +13,27 @@
 
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages > li { padding: 0.5rem 1rem; }
+      #messages > li > img{ width: 100%; }
       #messages > li:nth-child(odd) { background: #efefef; }
 
+      .modal{
+        display: none;
+        position: absolute;
+    top: 0;
+    background: #00000085;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+      }
+      .modal.open{
+        display: block;
+      }
+      form#modalForm {
+    background: #fff;
+    padding: 2em;
+}
 
     </style>
   </head>
@@ -22,12 +41,23 @@
 
     <ul id="messages"></ul>
     <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
+      <input id="input" autocomplete="off" /><button>Send</button><button onclick="openModal()" type="'button">Image</button>
     </form>
+    <div class="modal">
+      <form id="modalForm" action="">
+        <input type="file" id="myFile" name="filename"><button>Send</button><button onclick="closeModal()" type="'button">Close</button>
+      </form>
+    </div>
   </body>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script>
+    function openModal(){
+      document.getElementsByClassName('modal').classList.add('open')
+    }
+    function closeModal(){
+      document.getElementsByClassName('modal').classList.remove('open')
+    }
     var nick = prompt('What is your desired username?');
     if (nick === null || nick === '' || nick === ' '){
       var val = Math.floor(1000 + Math.random() * 9000);
@@ -38,8 +68,9 @@ var socket = io();
 socket.emit('newuser', nick);
 var messages = document.getElementById('messages');
 var form = document.getElementById('form');
+var modalForm = document.getElementById('modalForm');
 var input = document.getElementById('input');
-
+var img = document.getElementById('myFile');
 form.addEventListener('submit', function(e) {
   e.preventDefault();
   if (input.value) {
@@ -47,6 +78,30 @@ form.addEventListener('submit', function(e) {
     input.value = '';
   }
 });
+
+modalForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+  if (img.value) {
+    var filesSelected = img.files;
+    if (filesSelected.length > 0) {
+      var fileToLoad = filesSelected[0];
+
+      var fileReader = new FileReader();
+
+      fileReader.onload = function(fileLoadedEvent) {
+        var srcData = fileLoadedEvent.target.result; // <--- data: base64
+
+        socket.emit('chat image', srcData);
+    img.value = '';
+
+        srcData
+      }
+      fileReader.readAsDataURL(fileToLoad);
+    }
+   
+  }
+});
+
 socket.on('connection2', function(msg){
   $('#messages').append($('<li style="font-style:italic;">').text(msg));
 });
@@ -61,6 +116,18 @@ socket.on('chat message', function(msg) {
   messages.appendChild(item);
   window.scrollTo(0, document.body.scrollHeight);
 });
+
+socket.on('chat image', function(msg) {
+  var item = document.createElement('li');
+  
+  img.src = msg;
+  item.innerHTML = "<img src='" + msg+"'/>";
+
+  messages.appendChild(item);
+  window.scrollTo(0, document.body.scrollHeight);
+});
+
+
 
   </script>
 </html>
