@@ -10,15 +10,18 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  socket.on('newuser', function(nick){
+    var newUser = nick;
+    console.log(newUser + ' connected');
+    io.emit('connection2', newUser + ' has connected.');
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    io.emit('disconnection', newUser + ' has left');
   });
   socket.on('chat message', (msg) => {
     io.emit('chat message', msg);
   });
 });
-
+});
 server.listen(process.env.PORT || 8080, () => {
-  console.log('listening on *:3000');
+  console.log('listening on *:8080');
 });

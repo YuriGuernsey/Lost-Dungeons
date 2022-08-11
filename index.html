@@ -27,14 +27,14 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    let name = prompt('Type here');
-    if (name != "") {
-
-}else{
-  
-}
+    var nick = prompt('What is your desired username?');
+    if (nick === null || nick === '' || nick === ' '){
+      var val = Math.floor(1000 + Math.random() * 9000);
+      nick = 'User#' + val;
+    }
 var socket = io();
 
+socket.emit('newuser', nick);
 var messages = document.getElementById('messages');
 var form = document.getElementById('form');
 var input = document.getElementById('input');
@@ -42,11 +42,16 @@ var input = document.getElementById('input');
 form.addEventListener('submit', function(e) {
   e.preventDefault();
   if (input.value) {
-    socket.emit('chat message', name + ': ' + input.value);
+    socket.emit('chat message', nick + ': ' + input.value);
     input.value = '';
   }
 });
-
+socket.on('connection2', function(msg){
+  $('#messages').append($('<li style="font-style:italic;">').text(msg));
+});
+socket.on('disconnection', function(msg){
+  $('#messages').append($('<li style="font-style:italic;">').text(msg));
+});
 
 
 socket.on('chat message', function(msg) {
